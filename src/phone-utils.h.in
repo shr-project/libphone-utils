@@ -19,13 +19,16 @@
 
 #define PHONE_UTILS_CONFIG "@SYSCONFDIR@/phone-utils.conf"
 
-void 
+int
 phone_utils_init();
 
 void
 phone_utils_deinit();
 
-void 
+int
+phone_utils_is_initialized();
+
+int
 phone_utils_set_codes(char *_international_prefix, char *_national_prefix, 
                       char *_country_code, char *_home_code);
 
@@ -33,7 +36,7 @@ phone_utils_set_codes(char *_international_prefix, char *_national_prefix,
 phone_utils_set_delimiters(char *trailing_delimiters, char *possible_chars, 
                        char *filler_chars) */
 
-void 
+int
 phone_utils_init_from_file(const char *filename) ;
 
 const char *

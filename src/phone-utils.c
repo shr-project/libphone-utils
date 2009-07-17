@@ -38,7 +38,7 @@ static char *trailing_delimiters = "wWpP;,";
 static char *possible_chars = "0123456789+";
 static char *filler_chars = " -()";
 
-void 
+int
 phone_utils_init()
 {
 	international_prefix = NULL;
@@ -55,7 +55,7 @@ phone_utils_init()
 	possible_chars = NULL;
 	filler_chars = NULL;
 	 */
-	phone_utils_init_from_file(PHONE_UTILS_CONFIG);
+	return phone_utils_init_from_file(PHONE_UTILS_CONFIG);
 }
 
 void
@@ -74,55 +74,76 @@ phone_utils_deinit()
 }
 
 
-void 
+int
 phone_utils_set_codes(char *_international_prefix, char *_national_prefix, 
                       char *_country_code, char *_home_code)
 {
+	int ret = 0;
 	if (_international_prefix)
-		phone_utils_set_user_international_prefix(_international_prefix);
+		ret = ret || phone_utils_set_user_international_prefix(_international_prefix);
 	if (_national_prefix)
-		phone_utils_set_user_national_prefix(_national_prefix);
+		ret = ret || phone_utils_set_user_national_prefix(_national_prefix);
 	if (_country_code)
-		phone_utils_set_user_country_code(_country_code);
+		ret = ret || phone_utils_set_user_country_code(_country_code);
 	if (_home_code)
-		phone_utils_set_user_home_code (_home_code);
+		ret = ret || phone_utils_set_user_home_code (_home_code);
+
+	return ret;
 }
 
 /*void 
 phone_utils_set_delimiters(char *trailing_delimiters, char *possible_chars, 
                        char *filler_chars) */
 
-void 
+int
 phone_utils_init_from_file(const char *filename) 
 {
 	GKeyFile *keyfile;
 	GKeyFileFlags flags;
 	GError *error = NULL;
+	char *tmp;
+	int ret = 0;
 
 	keyfile = g_key_file_new ();
-	flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;
-	if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
-		g_error (error->message);
-		return;
+	if (!keyfile) {
+		g_debug("Can't allocate memory! %s:%d\n"
+		        "Initializing key from file failed\n", __FILE__, __LINE__);
+		return 1;
 	}
-	char *tmp;
+	flags = G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS;
+	
+	if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
+		g_key_file_free(keyfile);
+		g_warning (error->message);
+		return 1;
+	}
 
-	phone_utils_set_user_international_prefix(
+	ret = ret || phone_utils_set_user_international_prefix(
 		tmp = g_key_file_get_string(keyfile,"local","international_prefix",NULL));
 	free(tmp);
-	phone_utils_set_user_national_prefix(
+	
+	ret = ret || phone_utils_set_user_national_prefix(
 		tmp = g_key_file_get_string(keyfile,"local","national_prefix",NULL));
 	free(tmp);
-	phone_utils_set_user_country_code(
+	
+	ret = ret || phone_utils_set_user_country_code(
 		tmp = g_key_file_get_string(keyfile,"local","country_code",NULL));
 	free(tmp);
-	phone_utils_set_user_home_code(
+	
+	ret = ret || phone_utils_set_user_home_code(
 		tmp = g_key_file_get_string(keyfile,"local","home_code",NULL));
 	free(tmp);
 
 	g_key_file_free(keyfile);
+	return ret;
 }
 
+int
+phone_utils_is_initialized()
+{
+	return international_prefix && national_prefix && country_code && home_code
+		&& trailing_delimiters && possible_chars && filler_chars;
+}
 
 const char *
 phone_utils_get_user_international_prefix() 
