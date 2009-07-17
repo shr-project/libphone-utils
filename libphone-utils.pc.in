@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: libphone-utils
+Description: a library for aux phone functions
+Version: @VERSION@
+Requires: glib-2.0 gobject-2.0
+Libs: -L${libdir} -lphone-utils
+Cflags: -I${includedir}/phone-utils
+
+
