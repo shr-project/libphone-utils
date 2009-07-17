@@ -1,4 +1,4 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-sysconf_DATA = phone-utils.conf 
+dist_sysconf_DATA = phone-utils.conf 
 
