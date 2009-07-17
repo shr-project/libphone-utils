@@ -255,8 +255,8 @@ phone_utils_normalize_number(const char *_number)
 		int total_len;
 		tmp = number;
 		/* malloc: +1 for '+' */ 
-		total_len = 1 + country_code_len + len - national_prefix_len + 1; 
-		number = malloc(total_len);
+		total_len = 1 + country_code_len + len - national_prefix_len; 
+		number = malloc(total_len + 1);
 		number[0] = '+';
 		strncpy(&number[1], country_code, country_code_len);
 		strncpy(&number[1 + country_code_len], &tmp[national_prefix_len], len - national_prefix_len);
@@ -269,8 +269,8 @@ phone_utils_normalize_number(const char *_number)
 		int total_len;
 		tmp = number;
 		/* malloc: +1 for '+' */ 
-		total_len = 1 + country_code_len + len + 1;
-		number = malloc (total_len);
+		total_len = 1 + country_code_len + len;
+		number = malloc (total_len + 1);
 		number[0] = '+';
 		strncpy(&number[1], country_code, country_code_len);
 		strncpy(&number[1 + country_code_len], tmp, len);
