@@ -69,6 +69,8 @@ phone_utils_deinit()
 		free(country_code);
 	if (home_code)
 		free(home_code);
+
+	international_prefix = national_prefix = country_code = home_code = NULL;
 }
 
 
@@ -117,7 +119,7 @@ phone_utils_init_from_file(const char *filename)
 	phone_utils_set_user_home_code(
 		tmp = g_key_file_get_string(keyfile,"local","home_code",NULL));
 	free(tmp);
-	
+
 	g_key_file_free(keyfile);
 }
 
