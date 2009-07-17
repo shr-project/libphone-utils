@@ -58,6 +58,19 @@ phone_utils_init()
 	phone_utils_init_from_file(PHONE_UTILS_CONFIG);
 }
 
+void
+phone_utils_deinit()
+{
+	if (international_prefix)
+		free(international_prefix);
+	if (national_prefix)
+		free(national_prefix);
+	if (country_code)
+		free(country_code);
+	if (home_code)
+		free(home_code);
+}
+
 
 void 
 phone_utils_set_codes(char *_international_prefix, char *_national_prefix, 
