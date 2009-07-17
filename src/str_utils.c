@@ -60,7 +60,7 @@ strrchrs(char *string, char filters_array[], int negate)
 		string--;
 	}
 
-	return (*string) ? string : NULL;
+	return (string >= start) ? string : NULL;
 
 }
 

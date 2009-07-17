@@ -103,15 +103,20 @@ phone_utils_init_from_file(const char *filename)
 		g_error (error->message);
 		return;
 	}
+	char *tmp;
 
 	phone_utils_set_user_international_prefix(
-		g_key_file_get_string(keyfile,"local","international_prefix",NULL));
+		tmp = g_key_file_get_string(keyfile,"local","international_prefix",NULL));
+	free(tmp);
 	phone_utils_set_user_national_prefix(
-		g_key_file_get_string(keyfile,"local","national_prefix",NULL));
+		tmp = g_key_file_get_string(keyfile,"local","national_prefix",NULL));
+	free(tmp);
 	phone_utils_set_user_country_code(
-		g_key_file_get_string(keyfile,"local","country_code",NULL));
+		tmp = g_key_file_get_string(keyfile,"local","country_code",NULL));
+	free(tmp);
 	phone_utils_set_user_home_code(
-		g_key_file_get_string(keyfile,"local","home_code",NULL));
+		tmp = g_key_file_get_string(keyfile,"local","home_code",NULL));
+	free(tmp);
 	
 	g_key_file_free(keyfile);
 }

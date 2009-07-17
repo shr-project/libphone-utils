@@ -22,6 +22,8 @@
 void 
 phone_utils_init();
 
+void
+phone_utils_deinit();
 
 void 
 phone_utils_set_codes(char *_international_prefix, char *_national_prefix, 
