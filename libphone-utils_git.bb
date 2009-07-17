@@ -8,5 +8,5 @@ DEPENDS="glib-2.0"
 inherit pkgconfig autotools autotools_stage
 
 CONFFILES_${PN} = "${sysconfdir}/phone-utils.conf"
-#SRC_URI = "svn:///home/tom/projects/svn/libphone-utils/;module=trunk;proto=file;rev=HEAD"
 SRC_URI = "git://git.shr-project.org/repo/libphone-utils.git;proto=http"
+S="${WORKDIR}/git"
