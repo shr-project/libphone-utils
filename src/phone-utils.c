@@ -146,6 +146,12 @@ phone_utils_init_from_file(const char *filename)
 }
 
 int
+phone_utils_save_config()
+{
+	return phone_utils_save_config_to_file(PHONE_UTILS_CONFIG);
+}
+
+int
 phone_utils_save_config_to_file(const char *filename) 
 {
 	GKeyFile *keyfile;

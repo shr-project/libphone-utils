@@ -40,6 +40,12 @@ phone_utils_set_delimiters(char *trailing_delimiters, char *possible_chars,
 int
 phone_utils_init_from_file(const char *filename) ;
 
+int
+phone_utils_save_config();
+
+int
+phone_utils_save_config_to_file(const char *filename);
+
 char *
 phone_utils_get_user_international_prefix() ;
 
