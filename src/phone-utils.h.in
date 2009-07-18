@@ -18,6 +18,7 @@
 #include <glib.h>
 
 #define PHONE_UTILS_CONFIG "@SYSCONFDIR@/phone-utils.conf"
+#define PHONE_UTILS_CONFIG_CODES_GROUP "local"
 
 int
 phone_utils_init();
@@ -30,7 +31,7 @@ phone_utils_is_initialized();
 
 int
 phone_utils_set_codes(char *_international_prefix, char *_national_prefix, 
-                      char *_country_code, char *_home_code);
+                      char *_country_code, char *_area_code);
 
 /*void 
 phone_utils_set_delimiters(char *trailing_delimiters, char *possible_chars, 
@@ -39,17 +40,17 @@ phone_utils_set_delimiters(char *trailing_delimiters, char *possible_chars,
 int
 phone_utils_init_from_file(const char *filename) ;
 
-const char *
+char *
 phone_utils_get_user_international_prefix() ;
 
-const char *
+char *
 phone_utils_get_user_national_prefix() ;
 
-const char *
+char *
 phone_utils_get_user_country_code();
 
-const char * 
-phone_utils_get_user_home_code() ;
+char * 
+phone_utils_get_user_area_code() ;
 
 int
 phone_utils_set_user_international_prefix(const char *value) ;
@@ -61,7 +62,7 @@ int
 phone_utils_set_user_country_code(const char *value);
 
 int
-phone_utils_set_user_home_code(const char *value) ;
+phone_utils_set_user_area_code(const char *value) ;
 
 char *
 phone_utils_normalize_number(const char *_number);
