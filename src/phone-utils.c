@@ -359,9 +359,20 @@ phone_utils_normalize_number(const char *_number)
 	char *tmp;
 	int len;
 
+	/* on error */
+	if (!number) {
+		return NULL;
+	}
+	
 	remove_from_chrs(&number, trailing_delimiters, 0);
 	filter_string(&number, filler_chars);
 	len = remove_from_chrs_r(&number, possible_chars, 1);
+
+	/* if empty, i.e some sort of code / ilegal number, return the number */
+	if (len == 0) {
+		free(number);
+		return strdup(_number);
+	}
 
 	/* if normalized, skip */
 	if (number[0] == '+') {
