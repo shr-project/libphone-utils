@@ -423,7 +423,7 @@ phone_utils_normalize_number(const char *_number)
 int 
 phone_utils_numbers_equal(const char * _a, const char * _b)
 {
-	int ret;
+	int ret = 0;
 	char *a = phone_utils_normalize_number((gchar *)_a);
 	char *b = phone_utils_normalize_number((gchar *)_b);
 
