@@ -14,7 +14,7 @@
 
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with python-phoneutils.  If not, see <http://www.gnu.org/licenses/>.
+# along with libphone-utils.  If not, see <http://www.gnu.org/licenses/>.
 #
 
 import sys
