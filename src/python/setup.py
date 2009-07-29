@@ -1,7 +1,7 @@
 import sys
 import os
 
-if not os.path.exists("phoneutils/phoneutils.c_phoneutils.c"):
+if not os.path.exists("phoneutils/c_phoneutils.c"):
     try:
         import Cython
     except ImportError:
