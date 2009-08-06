@@ -424,19 +424,23 @@ int
 phone_utils_numbers_equal(const char * _a, const char * _b)
 {
 	int ret = 0;
-	char *a = phone_utils_normalize_number((gchar *)_a);
-	char *b = phone_utils_normalize_number((gchar *)_b);
+	char *a = phone_utils_normalize_number(_a);
+	char *b = phone_utils_normalize_number(_b);
 
 	if (a && b) {
-		if (strcmp(a, b) == 0)
+		if (strcmp(a, b) == 0) {
 			ret = 1;
-	
-		g_free(a);
-		g_free(b);
+		}
 	}
 	else {
 		ret = 0;
 	}
+
+	/* clean up */
+	if (a)
+		free(a);
+	if (b)
+		free(b);
 
 	return ret;
 }
