@@ -1,7 +1,10 @@
 /*
  *  Copyright (C) 2009
- *      Authors (alphabetical) :
- *              Tom Hacohen (tom@stosb.com)
+ *	Authors (alphabetical) :
+ *		Tom Hacohen (tom@stosb.com)
+ *
+ *	Thanks (alphabetical) :
+ *		Joerg "DocScrutinizer" Reisenweber (joerg@openmoko.org / reisenweber@gmx.net) - The number normalization method is mostly based on an algorithm suggested by him.
  *              
  *
  *  This program is free software; you can redistribute it and/or modify
