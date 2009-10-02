@@ -80,14 +80,14 @@ phone_utils_numbers_equal(const char * _a, const char * _b);
 /* sms stuff */
 /* string is assumed to be in utf8 */
 int
-phone_utils_sms_strlen(const char *string);
+phone_utils_gsm_sms_strlen(const char *string);
 
 /* returns true if the function will have to be encoded in ucs */
 int
-phone_utils_is_gsm_ucs(const char *string);
+phone_utils_gsm_is_ucs(const char *string);
 
 /* returns the char size in bytes (in gsm encoding) of the passed unicode char */
 int
-phone_utils_get_gsm_char_size(int chr);
+phone_utils_gsm_get_char_size(int chr);
 
 #endif

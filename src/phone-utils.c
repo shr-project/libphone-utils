@@ -596,7 +596,7 @@ utf8_get_next(const char *buf, int *iindex);
 
 /* returns the char size in bytes (in gsm encoding) of the passed unicode char */
 int
-phone_utils_get_gsm_char_size(int chr)
+phone_utils_gsm_get_char_size(int chr)
 {
 	int j = 0;
 	while (gsm_char_size[j][1] && gsm_char_size[j][0] != chr) {
@@ -611,7 +611,7 @@ phone_utils_get_gsm_char_size(int chr)
 
 /* returns true if the function will have to be encoded in ucs */
 int
-phone_utils_is_gsm_ucs(const char *string)
+phone_utils_gsm_is_ucs(const char *string)
 {
 	int i;
 	int chr;
@@ -630,7 +630,7 @@ phone_utils_is_gsm_ucs(const char *string)
 
 /* string is assumed to be in utf8 */
 int
-phone_utils_sms_strlen(const char *string)
+phone_utils_gsm_sms_strlen(const char *string)
 {
 	int i;
 	int len, size;
