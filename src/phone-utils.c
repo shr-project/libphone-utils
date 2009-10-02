@@ -653,7 +653,7 @@ phone_utils_sms_strlen(const char *string)
 		}		
 	}
 
-	return (ucs) ? len * 2 : size;	
+	return (ucs) ? len : size;	
 }
 
 /* Many thanks to evas */
