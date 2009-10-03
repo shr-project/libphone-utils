@@ -620,7 +620,7 @@ phone_utils_gsm_is_ucs(const char *string)
 	chr = utf8_get_next(string, &i);
 	
 	for ( ; chr ; chr = utf8_get_next(string, &i)) {
-		if (!phone_utils_get_gsm_char_size(chr)) {
+		if (!phone_utils_gsm_get_char_size(chr)) {
 			return 1;
 		}		
 	}
@@ -644,7 +644,7 @@ phone_utils_gsm_sms_strlen(const char *string)
 		
 		int char_size;
 
-		char_size = phone_utils_get_gsm_char_size(chr);
+		char_size = phone_utils_gsm_get_char_size(chr);
 		if (char_size) {
 			size += char_size;
 		}
