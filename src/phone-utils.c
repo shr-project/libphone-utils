@@ -741,7 +741,7 @@ phone_utils_gsm_sms_split_message(const char *message, int len, int ucs)
 		}
 	}
 
-	number_of_messages = (len / limit) + 1;
+	number_of_messages = (int) ceilf((float) len / limit);
 	messages = calloc(number_of_messages + 1, sizeof(char *));
 	if (!messages) {
 		goto end;
@@ -769,7 +769,9 @@ phone_utils_gsm_sms_split_message(const char *message, int len, int ucs)
 	i--; /* make i point to the last real message */
 
 	/* reduce the side of the last message to the real size needed */
-	messages[i] = realloc(messages[i], (len % limit) + 1);
+	if (len % limit) {
+		messages[i] = realloc(messages[i], (len % limit) + 1);
+	}
 	
 end:
 	return messages;
