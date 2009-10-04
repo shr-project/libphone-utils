@@ -718,3 +718,74 @@ utf8_get_next(const char *buf, int *iindex)
    *iindex = index;
    return r;
 }
+
+char **
+phone_utils_gsm_sms_split_message(const char *message, int len, int ucs)
+{
+	char **messages;
+	int limit = 1; /* just a safe value so it won't crash */
+	int number_of_messages;
+	int i, j;
+	int start, end;
+	
+	if (ucs) {
+		limit = PHONE_UTILS_GSM_SMS_UCS_LIMIT; /* ucs-2 number of chars limit */
+		if (len > limit) {
+			limit = PHONE_UTILS_GSM_SMS_UCS_SPLIT_LIMIT;
+		}
+	}
+	else {
+		limit = PHONE_UTILS_GSM_SMS_TEXT_LIMIT; /* regular number of chars limit */
+		if (len > limit) {
+			limit  = PHONE_UTILS_GSM_SMS_TEXT_SPLIT_LIMIT;
+		}
+	}
+
+	number_of_messages = (len / limit) + 1;
+	messages = calloc(number_of_messages + 1, sizeof(char *));
+	if (!messages) {
+		goto end;
+	}
+	
+	/* copy the messages */
+	start = 0;
+	for (i = 0 ; i < number_of_messages ; i++) {
+		/* we want to go "limit" chars */
+		for (j = 0, end = start ; j < limit ; j++) {
+			utf8_get_next(message, &end);
+		}
+		messages[i] = malloc((end - start)  + 1); /* the actual utf8 len + 1 for null */
+		if (!messages[i]) {
+			goto clean_messages;
+		}
+
+		/* copy that part of the string */
+		strncpy(messages[i], &message[start], end - start);
+		messages[i][end - start] = '\0';
+
+		start = end; /* advance start */
+	}
+	messages[i] = NULL; /* terminate the list with a null */
+	i--; /* make i point to the last real message */
+
+	/* reduce the side of the last message to the real size needed */
+	messages[i] = realloc(messages[i], (len % limit) + 1);
+	
+end:
+	return messages;
+
+/* error handling */
+clean_messages:
+	if (messages) {
+		for (i = 0 ; i < number_of_messages ; i++) {
+			if (messages[i]) {
+				free(messages[i]);
+			}
+		}
+
+		free(messages);
+		messages = NULL;
+	}
+	
+	goto end;
+}
