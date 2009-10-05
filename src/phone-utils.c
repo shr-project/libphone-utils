@@ -749,10 +749,10 @@ phone_utils_gsm_sms_split_message(const char *message, int len, int ucs)
 	}
 	
 	/* copy the messages */
-	start = 0;
+	start = end = 0;
 	for (i = 0 ; i < number_of_messages ; i++) {
 		/* we want to go "limit" chars */
-		for (j = 0, end = start ; j < limit ; j++) {
+		for (j = 0 ; j < limit ; j++) {
 			utf8_get_next(message, &end);
 		}
 		messages[i] = malloc((end - start)  + 1); /* the actual utf8 len + 1 for null */
@@ -769,9 +769,10 @@ phone_utils_gsm_sms_split_message(const char *message, int len, int ucs)
 	messages[i] = NULL; /* terminate the list with a null */
 	i--; /* make i point to the last real message */
 
+	
 	/* reduce the side of the last message to the real size needed */
 	if (len % limit) {
-		messages[i] = realloc(messages[i], (len % limit) + 1);
+		messages[i] = realloc(messages[i], strlen(messages[i]) + 1);
 	}
 	
 end:
