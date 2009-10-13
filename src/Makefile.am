@@ -7,8 +7,9 @@ AM_CFLAGS = -Wall @GLIB_CFLAGS@
 lib_LTLIBRARIES = libphone-utils.la
 
 libphone_utils_la_SOURCES = phone-utils.c phone-utils.h \
-			    str_utils.c str_utils.h
-libphone_utils_HEADERS = phone-utils.h
+			    str_utils.c str_utils.h \
+			    phone-utils-gsm.c phone-utils-gsm.h
+libphone_utils_HEADERS = phone-utils.h phone-utils-gsm.h
 
 
 libphone_utilsdir = $(includedir)/phone-utils
