@@ -38,7 +38,7 @@ static char *area_code = NULL;
 static int area_code_len = 0;
 
 static char *trailing_delimiters = "wWpP;,";
-#define POSSIBLE_DIGITS "0123456789";
+#define POSSIBLE_DIGITS "0123456789"
 static char *possible_chars = POSSIBLE_DIGITS "+";
 static char *filler_chars = " -()";
 
