@@ -38,7 +38,8 @@ static char *area_code = NULL;
 static int area_code_len = 0;
 
 static char *trailing_delimiters = "wWpP;,";
-static char *possible_chars = "0123456789+";
+#define POSSIBLE_DIGITS "0123456789";
+static char *possible_chars = POSSIBLE_DIGITS "+";
 static char *filler_chars = " -()";
 
 int
@@ -447,4 +448,26 @@ phone_utils_numbers_equal(const char * _a, const char * _b)
 
 	return ret;
 }
+
+/* returns true if a valid number */
+int
+phone_utils_is_valid_number(const char *number)
+{
+	if (!number)
+		return 0;
+
+	/* FIXME: YUCK! I hate hardcoded stuff */
+	if (*number == '+')
+		number++;
+
+	while (*number) {
+		if (!strchr(POSSIBLE_DIGITS, *number)) {
+			return 0;
+		}
+		number++;
+	}
+
+	return 1;
+}
+
 
