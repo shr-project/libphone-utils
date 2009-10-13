@@ -13,8 +13,8 @@
  *  GNU Lesser General Public License for more details.
  */
 
-#ifndef _PHONE_UTILS_H
-#define _PHONE_UTILS_H
+#ifndef _PHONE_UTILS_GSM_H
+#define _PHONE_UTILS_GSM_H
 
 /* sms stuff */
 #define PHONE_UTILS_GSM_SMS_TEXT_LIMIT		160
