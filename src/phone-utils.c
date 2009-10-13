@@ -21,12 +21,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <math.h>
 
 #include <glib.h>
 
 #include "phone-utils.h"
-#include "str_utils.h"
+#include "str-utils.h"
 
 
 static char *international_prefix = NULL;

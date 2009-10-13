@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "str_utils.h"
+#include "str-utils.h"
 
 int
 filter_string(char **string, char filters_array[])
@@ -97,4 +97,67 @@ remove_from_chrs_r(char **string, char filters_array[], int negate)
 	*string = pos;
 	return strlen(*string);	
 
+}
+
+/* Many thanks to evas */
+int
+utf8_get_next(const char *buf, int *iindex)
+{
+   /* Reads UTF8 bytes from @buf, starting at *@index and returns
+    * the decoded code point at iindex offset, and advances iindex
+    * to the next code point after this.
+    *
+    * Returns 0 to indicate there is no next char
+    */
+   int index = *iindex, len, r;
+   unsigned char d, d2, d3, d4;
+
+   /* if this char is the null terminator, exit */
+   if (!buf[index])
+     return 0;
+     
+   d = buf[index++];
+
+   while (buf[index] && ((buf[index] & 0xc0) == 0x80))
+     index++;
+   len = index - *iindex;
+
+   if (len == 1)
+      r = d;
+   else if (len == 2)
+     {
+	/* 2 bytes */
+        d2 = buf[*iindex + 1];
+	r = d & 0x1f; /* copy lower 5 */
+	r <<= 6;
+	r |= (d2 & 0x3f); /* copy lower 6 */
+     }
+   else if (len == 3)
+     {
+	/* 3 bytes */
+        d2 = buf[*iindex + 1];
+        d3 = buf[*iindex + 2];
+	r = d & 0x0f; /* copy lower 4 */
+	r <<= 6;
+	r |= (d2 & 0x3f);
+	r <<= 6;
+	r |= (d3 & 0x3f);
+     }
+   else
+     {
+	/* 4 bytes */
+        d2 = buf[*iindex + 1];
+        d3 = buf[*iindex + 2];
+        d4 = buf[*iindex + 3];
+	r = d & 0x0f; /* copy lower 4 */
+	r <<= 6;
+	r |= (d2 & 0x3f);
+	r <<= 6;
+	r |= (d3 & 0x3f);
+	r <<= 6;
+	r |= (d4 & 0x3f);
+     }
+
+   *iindex = index;
+   return r;
 }

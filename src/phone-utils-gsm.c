@@ -12,8 +12,13 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
  */
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 #include "phone-utils-gsm.h"
+
+#include "str-utils.h"
 
 static int gsm_char_size[][2] = {
 	{0x0040, 1},	/* #	COMMERCIAL AT */
@@ -157,9 +162,6 @@ static int gsm_char_size[][2] = {
 	{0     , 0}	/* END */
 	};
 
-static int
-utf8_get_next(const char *buf, int *iindex);
-
 /* returns the char size in bytes (in gsm encoding) of the passed unicode char */
 int
 phone_utils_gsm_get_char_size(int chr)
@@ -220,69 +222,6 @@ phone_utils_gsm_sms_strlen(const char *string)
 	}
 
 	return (ucs) ? len : size;	
-}
-
-/* Many thanks to evas */
-static int
-utf8_get_next(const char *buf, int *iindex)
-{
-   /* Reads UTF8 bytes from @buf, starting at *@index and returns
-    * the decoded code point at iindex offset, and advances iindex
-    * to the next code point after this.
-    *
-    * Returns 0 to indicate there is no next char
-    */
-   int index = *iindex, len, r;
-   unsigned char d, d2, d3, d4;
-
-   /* if this char is the null terminator, exit */
-   if (!buf[index])
-     return 0;
-     
-   d = buf[index++];
-
-   while (buf[index] && ((buf[index] & 0xc0) == 0x80))
-     index++;
-   len = index - *iindex;
-
-   if (len == 1)
-      r = d;
-   else if (len == 2)
-     {
-	/* 2 bytes */
-        d2 = buf[*iindex + 1];
-	r = d & 0x1f; /* copy lower 5 */
-	r <<= 6;
-	r |= (d2 & 0x3f); /* copy lower 6 */
-     }
-   else if (len == 3)
-     {
-	/* 3 bytes */
-        d2 = buf[*iindex + 1];
-        d3 = buf[*iindex + 2];
-	r = d & 0x0f; /* copy lower 4 */
-	r <<= 6;
-	r |= (d2 & 0x3f);
-	r <<= 6;
-	r |= (d3 & 0x3f);
-     }
-   else
-     {
-	/* 4 bytes */
-        d2 = buf[*iindex + 1];
-        d3 = buf[*iindex + 2];
-        d4 = buf[*iindex + 3];
-	r = d & 0x0f; /* copy lower 4 */
-	r <<= 6;
-	r |= (d2 & 0x3f);
-	r <<= 6;
-	r |= (d3 & 0x3f);
-	r <<= 6;
-	r |= (d4 & 0x3f);
-     }
-
-   *iindex = index;
-   return r;
 }
 
 char **

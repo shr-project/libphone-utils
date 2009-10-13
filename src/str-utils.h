@@ -31,4 +31,7 @@ remove_from_chrs(char **string, char filters_array[], int negate);
 int
 remove_from_chrs_r(char **string, char filters_array[], int negate);
 
+int
+utf8_get_next(const char *buf, int *iindex);
+
 #endif
