@@ -22,15 +22,30 @@
 #define PHONE_UTILS_GSM_SMS_UCS_LIMIT		70
 #define PHONE_UTILS_GSM_SMS_UCS_SPLIT_LIMIT	67
 
-/* string is assumed to be in utf8 */
+/* Receives a utf8 encoded string and returns the string len of this string
+ * if it'll be sent via an sms. This function detects whether this string
+ * should be represented in gsm7 or ucs.
+ * If it should be represnetd in gsm7 this function returns the number
+ * of bytes needed in order to represent this string (i.e ] is counted as 2)
+ * If this string should be sent using the ucs2 encoding the number of chars
+ * needed in order to represent this, i.e the equiv of a regular utf8-strlen
+ *
+ * This function assumes srting is a valid utf8 string*/
 int
 phone_utils_gsm_sms_strlen(const char *string);
 
-/* returns true if the function will have to be encoded in ucs */
+/* Receives a utf8 encoded string and returns true if this string has to
+ * be represented in ucs2 or false if it can be representehd in gsm7
+ *
+ * This function assumes srting is a valid utf8 string*/
 int
 phone_utils_gsm_is_ucs(const char *string);
 
-/* returns the char size in bytes (in gsm encoding) of the passed unicode char */
+/* This function recieves a unicode char and returns the number of bytes
+ * this char takes in order to be represented in the gsm 7bit charset
+ *
+ * returns 0 when this char can not be represented using this charset.
+ */
 int
 phone_utils_gsm_get_char_size(int chr);
 

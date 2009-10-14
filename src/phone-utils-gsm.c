@@ -20,6 +20,7 @@
 
 #include "str-utils.h"
 
+/* a mapping of unicode value to size in bytes in the gsm charset */
 static int gsm_char_size[][2] = {
 	{0x0040, 1},	/* #	COMMERCIAL AT */
 	{0x00A3, 1},	/* #	POUND SIGN */
@@ -162,7 +163,6 @@ static int gsm_char_size[][2] = {
 	{0     , 0}	/* END */
 	};
 
-/* returns the char size in bytes (in gsm encoding) of the passed unicode char */
 int
 phone_utils_gsm_get_char_size(int chr)
 {
@@ -196,7 +196,6 @@ phone_utils_gsm_is_ucs(const char *string)
 	return 0;
 }
 
-/* string is assumed to be in utf8 */
 int
 phone_utils_gsm_sms_strlen(const char *string)
 {
