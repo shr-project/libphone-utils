@@ -16,6 +16,12 @@
 #ifndef _STR_UTILS_H
 #define _STR_UTILS_H
 
+/* This function receives a pointer to a malloc allocated string
+ * and a NULL terminated array of chars and returns a changes string
+ * to point to a shrunk down string without the chars from the filters_array.
+ *
+ * returns the length of the new string
+ */
 int
 filter_string(char **string, char filters_array[]);
 

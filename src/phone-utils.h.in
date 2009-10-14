@@ -22,15 +22,25 @@
 #define PHONE_UTILS_CONFIG "@SYSCONFDIR@/phone-utils.conf"
 #define PHONE_UTILS_CONFIG_CODES_GROUP "local"
 
+/* Initializes the use of phone-utils, calls phone_utils_init_from_file
+ * with the default config filename (PHONE_UTILS_CONFIG)
+ */
 int
 phone_utils_init();
 
+/* Cleans up the memory allocated by the lib, assumes the lib is already
+ * initialized.
+ */
 void
 phone_utils_deinit();
 
+/* returns true if the lib is already initialized, false otherwise */
 int
 phone_utils_is_initialized();
 
+/* calls all the phone_utils_set_* functions on all the arguments returns
+ * 0 on sucess.
+ */
 int
 phone_utils_set_codes(char *_international_prefix, char *_national_prefix, 
                       char *_country_code, char *_area_code);
@@ -39,45 +49,91 @@ phone_utils_set_codes(char *_international_prefix, char *_national_prefix,
 phone_utils_set_delimiters(char *trailing_delimiters, char *possible_chars, 
                        char *filler_chars) */
 
+/* initalizes the lib from configuration file denoted by filename
+ * assumes filename is a valid null terminated string
+ */
 int
 phone_utils_init_from_file(const char *filename) ;
 
+/* calls phone_utils_save_config_to_file with the default filename (PHONE_UTILS_CONFIG)
+ */
 int
 phone_utils_save_config();
 
+/* saves all the currently active configuration to the file denoted by filename
+ * assumes filename is a valid string
+ */
 int
 phone_utils_save_config_to_file(const char *filename);
 
+/* returns a copy allocated by strdup of this parameter */
 char *
 phone_utils_get_user_international_prefix() ;
 
+/* returns a copy allocated by strdup of this parameter */
 char *
 phone_utils_get_user_national_prefix() ;
 
+/* returns a copy allocated by strdup of this parameter */
 char *
 phone_utils_get_user_country_code();
 
+/* returns a copy allocated by strdup of this parameter */
 char * 
 phone_utils_get_user_area_code() ;
 
+/* sets this parameters using value returns 0 on sucess */
 int
 phone_utils_set_user_international_prefix(const char *value) ;
 
+/* sets this parameters using value returns 0 on sucess */
 int
 phone_utils_set_user_national_prefix(const char *value) ;
 
+/* sets this parameters using value returns 0 on sucess */
 int
 phone_utils_set_user_country_code(const char *value);
 
+/* sets this parameters using value returns 0 on sucess */
 int
 phone_utils_set_user_area_code(const char *value) ;
 
+/* receives a valid string that holds a number to normalize
+ * and normalizes it according (mostly) this guidelines:
+ *
+ * normalized number = "+<CC><HC><NUMBER>"
+ * non-normalized my be: <NUMBER> | <NationalPrefix><anyHC><NUMBER> | 
+ * <InterntlPrefix><anyCC><anyHC><NUMBER>
+ * 
+ * so: 
+ * Nr1 := Nr s/<IP>(.*)/\+$1/           #00 49 911 12345 -> + 49 911 12345
+ * Nr2 = Nr1 s/<NP>/\+<CC>/             # 0 911 12345 ->  + 49 911 12345
+ * Nr3 = Nr2 s/[^\+](.*)/\+<CC><HC>$1/  # 12345 ->  + 49 911 12345
+ * step3 above isn't considered very practical for cellphones
+ * <IP>, <CC>, <NP>, and <HC> are user definable config-values
+ * 
+ * some examples:
+ * normalized "*31#0049 (0) 30 12300 - 456W*1200*#" becomes +493012300456
+ * normalized "0049 30 123 00 456" becomes +493012300456
+ * normalized "030 123 00 456;foo" becomes +493012300456
+ * normalized "123 00 456" becomes +493012300456
+ *
+ * returns a malloc allocated string containing the normalized number
+ * returns NULL on error.
+ */
 char *
 phone_utils_normalize_number(const char *_number);
 
+/* receives two valid strings containing phone numbers, normalizes them
+ * using phone_utils_normalize_number and returns true if they are equal
+ * false otherwise
+ */
 int 
 phone_utils_numbers_equal(const char * _a, const char * _b);
 
+/* receives a valid string containing a phone number and returns true if
+ * it's a valid phone number, false otherwise.
+ */
 int
 phone_utils_is_valid_number(const char *number);
 

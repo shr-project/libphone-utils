@@ -27,7 +27,7 @@
 #include "phone-utils.h"
 #include "str-utils.h"
 
-
+/* the internal prefixes */
 static char *international_prefix = NULL;
 static int international_prefix_len = 0;
 static char *national_prefix = NULL;
@@ -37,6 +37,7 @@ static int country_code_len = 0;
 static char *area_code = NULL;
 static int area_code_len = 0;
 
+/* all the information needed for processing a number */
 static char *trailing_delimiters = "wWpP;,";
 #define POSSIBLE_DIGITS "0123456789ABCD"
 static char *possible_chars = POSSIBLE_DIGITS "+";
@@ -356,6 +357,7 @@ phone_utils_set_user_area_code(const char *value)
 	return 0;
 }
 
+/*FIXME: handle failed memory allocations! */
 char *
 phone_utils_normalize_number(const char *_number)
 {
@@ -449,7 +451,6 @@ phone_utils_numbers_equal(const char * _a, const char * _b)
 	return ret;
 }
 
-/* returns true if a valid number */
 int
 phone_utils_is_valid_number(const char *number)
 {
