@@ -452,7 +452,7 @@ phone_utils_numbers_equal(const char * _a, const char * _b)
 }
 
 int
-phone_utils_is_valid_number(const char *number)
+phone_utils_sms_is_valid_number(const char *number)
 {
 	if (!number)
 		return 0;
@@ -471,4 +471,23 @@ phone_utils_is_valid_number(const char *number)
 	return 1;
 }
 
+int
+phone_utils_call_is_valid_number(const char *number)
+{
+	if (!number)
+		return 0;
 
+	/* FIXME: YUCK! I hate hardcoded stuff */
+	if (*number == '+')
+		number++;
+
+	while (*number) {
+		if (!strchr(POSSIBLE_DIGITS, *number) &&
+			!strchr(trailing_delimiters, *number)) {
+			return 0;
+		}
+		number++;
+	}
+
+	return 1;
+}
