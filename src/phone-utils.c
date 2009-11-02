@@ -119,7 +119,7 @@ phone_utils_init_from_file(const char *filename)
 	
 	if (!g_key_file_load_from_file (keyfile, filename, flags, &error)) {
 		g_key_file_free(keyfile);
-		g_warning (error->message);
+		g_warning ("%s", error->message);
 		g_error_free(error);
 		return 1;
 	}
@@ -198,7 +198,7 @@ phone_utils_save_config_to_file(const char *filename)
 	}
 	
 	if (!(data = g_key_file_to_data (keyfile, NULL, &error))) {
-		g_warning (error->message);
+		g_warning ("%s", error->message);
 		g_error_free(error);
 		ret = 1;
 		goto free_key_file;
