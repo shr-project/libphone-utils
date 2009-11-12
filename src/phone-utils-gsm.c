@@ -306,7 +306,7 @@ phone_utils_gsm_number_is_ussd(const char *number){
 	if (len == 0)
 		return 0;
 		
-	if (number[len - 1] == '#') {
+	if (number[len - 1] == '#' || len <= 2) {
 		return 1;
 	}
 	return 0;
