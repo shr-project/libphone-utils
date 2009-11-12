@@ -296,3 +296,18 @@ clean_messages:
 	
 	goto end;
 }
+
+/* assumes number is not null */
+int
+phone_utils_gsm_number_is_ussd(const char *number){
+/*FIXME: make sure this algo is correct */
+	int len = strlen(number);
+	
+	if (len == 0)
+		return 0;
+		
+	if (number[len - 1] == '#') {
+		return 1;
+	}
+	return 0;
+}

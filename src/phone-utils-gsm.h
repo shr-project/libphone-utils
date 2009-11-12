@@ -57,4 +57,7 @@ phone_utils_gsm_get_char_size(int chr);
 char **
 phone_utils_gsm_sms_split_message(const char *message, int len, int ucs);
 
+int
+phone_utils_gsm_number_is_ussd(const char *number);
+
 #endif
