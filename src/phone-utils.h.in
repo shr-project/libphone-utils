@@ -132,9 +132,15 @@ int
 phone_utils_numbers_equal(const char * _a, const char * _b);
 
 /* receives a valid string containing a phone number and returns true if
- * it's a valid phone number, false otherwise.
- */
+    * it's a valid sms phone number, false otherwise.
+     */
 int
-phone_utils_is_valid_number(const char *number);
+phone_utils_sms_is_valid_number(const char *number);
+
+/* receives a valid string containing a phone number and returns true if
+    * it's a valid call phone number, false otherwise.
+     */
+int
+phone_utils_call_is_valid_number(const char *number);
 
 #endif
