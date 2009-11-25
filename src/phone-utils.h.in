@@ -21,6 +21,7 @@
 
 #define PHONE_UTILS_CONFIG "@SYSCONFDIR@/phone-utils.conf"
 #define PHONE_UTILS_CONFIG_CODES_GROUP "local"
+#define PHONE_UTILS_FIELD_DELIMITER '|'
 
 /* Initializes the use of phone-utils, calls phone_utils_init_from_file
  * with the default config filename (PHONE_UTILS_CONFIG)
@@ -68,18 +69,34 @@ phone_utils_save_config_to_file(const char *filename);
 
 /* returns a copy allocated by strdup of this parameter */
 char *
-phone_utils_get_user_international_prefix() ;
+phone_utils_get_strdup_user_international_prefix() ;
 
 /* returns a copy allocated by strdup of this parameter */
 char *
-phone_utils_get_user_national_prefix() ;
+phone_utils_get_strdup_user_national_prefix() ;
 
 /* returns a copy allocated by strdup of this parameter */
 char *
-phone_utils_get_user_country_code();
+phone_utils_get_strdup_user_country_code();
 
 /* returns a copy allocated by strdup of this parameter */
 char * 
+phone_utils_get_strdup_user_area_code() ;
+
+/* returns this parameter */
+const char *
+phone_utils_get_user_international_prefix() ;
+
+/* returns this parameter */
+const char *
+phone_utils_get_user_national_prefix() ;
+
+/* returns this parameter */
+const char *
+phone_utils_get_user_country_code();
+
+/* returns this parameter */
+const char * 
 phone_utils_get_user_area_code() ;
 
 /* sets this parameters using value returns 0 on sucess */
@@ -97,6 +114,15 @@ phone_utils_set_user_country_code(const char *value);
 /* sets this parameters using value returns 0 on sucess */
 int
 phone_utils_set_user_area_code(const char *value) ;
+
+/* document, TBD */
+char *phone_utils_get_user_international_prefixes();
+
+char *phone_utils_get_user_national_prefixes();
+
+char *phone_utils_get_user_country_codes();
+
+char *phone_utils_get_user_area_codes();
 
 /* receives a valid string that holds a number to normalize
  * and normalizes it according (mostly) this guidelines:
@@ -123,6 +149,11 @@ phone_utils_set_user_area_code(const char *value) ;
  */
 char *
 phone_utils_normalize_number(const char *_number);
+
+/* TBD */
+char *
+phone_utils_normalize_number_using_params(const char *_number, const char *param_country,
+					const char *param_area);
 
 /* receives two valid strings containing phone numbers, normalizes them
  * using phone_utils_normalize_number and returns true if they are equal

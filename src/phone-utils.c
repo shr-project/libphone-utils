@@ -28,14 +28,22 @@
 #include "str-utils.h"
 
 /* the internal prefixes */
-static char *international_prefix = NULL;
-static int international_prefix_len = 0;
-static char *national_prefix = NULL;
-static int national_prefix_len = 0;
-static char *country_code = NULL;
-static int country_code_len = 0;
-static char *area_code = NULL;
-static int area_code_len = 0;
+struct PrefixField {
+	const char *value;
+	int len;
+};
+
+struct Prefix {
+	struct PrefixField *fields;
+	char *value;
+	int len;
+};
+
+static struct Prefix international_prefix = {NULL, NULL, 0};
+static struct Prefix national_prefix = {NULL, NULL, 0};
+static struct Prefix country_code = {NULL, NULL, 0};
+static struct Prefix area_code = {NULL, NULL, 0};
+
 
 /* all the information needed for processing a number */
 static char *trailing_delimiters = "wWpP;,";
@@ -46,14 +54,14 @@ static char *filler_chars = " -()";
 int
 phone_utils_init()
 {
-	international_prefix = NULL;
-	international_prefix_len = 0;
-	national_prefix = NULL;
-	national_prefix_len = 0;
-	country_code = NULL;
-	country_code_len = 0;
-	area_code = NULL;
-	area_code_len = 0;
+	international_prefix.fields = NULL;
+	international_prefix.value = NULL;
+	national_prefix.fields = NULL;
+	national_prefix.value = NULL;
+	country_code.fields = NULL;
+	country_code.value = NULL;
+	area_code.fields = NULL;
+	area_code.value = NULL;
 
 	/*
 	trailing_delimiters = NULL;
@@ -63,19 +71,22 @@ phone_utils_init()
 	return phone_utils_init_from_file(PHONE_UTILS_CONFIG);
 }
 
+static void
+_phone_utils_free_prefix(struct Prefix *prefix)
+{
+	if (prefix->value) {
+		free(prefix->value);
+	}
+}
+
+
 void
 phone_utils_deinit()
 {
-	if (international_prefix)
-		free(international_prefix);
-	if (national_prefix)
-		free(national_prefix);
-	if (country_code)
-		free(country_code);
-	if (area_code)
-		free(area_code);
-
-	international_prefix = national_prefix = country_code = area_code = NULL;
+	_phone_utils_free_prefix(&international_prefix);
+	_phone_utils_free_prefix(&national_prefix);
+	_phone_utils_free_prefix(&country_code);
+	_phone_utils_free_prefix(&area_code);
 }
 
 
@@ -176,25 +187,21 @@ phone_utils_save_config_to_file(const char *filename)
 	/* set all the values */
 	{
 		char *tmp;
-		tmp = phone_utils_get_user_international_prefix();
+		tmp = phone_utils_get_user_international_prefixes();
 		g_key_file_set_value(keyfile, PHONE_UTILS_CONFIG_CODES_GROUP, 
 		                     "international_prefix", tmp);
-		free(tmp);
 
-		tmp =  phone_utils_get_user_national_prefix();	
+		tmp = phone_utils_get_user_national_prefixes();	
 		g_key_file_set_value(keyfile, PHONE_UTILS_CONFIG_CODES_GROUP, 
 		                     "national_prefix", tmp);
-		free(tmp);
 
-		tmp =  phone_utils_get_user_country_code();
+		tmp = phone_utils_get_user_country_codes();
 		g_key_file_set_value(keyfile, PHONE_UTILS_CONFIG_CODES_GROUP, 
 		                     "country_code", tmp);
-		free(tmp);
 
-		tmp =  phone_utils_get_user_area_code();
+		tmp = phone_utils_get_user_area_codes();
 		g_key_file_set_value(keyfile, PHONE_UTILS_CONFIG_CODES_GROUP, 
 		                     "area_code", tmp);
-		free(tmp);
 	}
 	
 	if (!(data = g_key_file_to_data (keyfile, NULL, &error))) {
@@ -232,138 +239,265 @@ end:
 int
 phone_utils_is_initialized()
 {
-	return international_prefix && national_prefix && country_code && area_code
+	return international_prefix.value && national_prefix.value
+		&& country_code.value && area_code.value
 		&& trailing_delimiters && possible_chars && filler_chars;
 }
 
-char *
-phone_utils_get_user_international_prefix() 
+static const char *
+_phone_utils_get_user_prefix(const struct Prefix *field)
 {
-	return (international_prefix) ? strdup(international_prefix) : NULL;
+	if (!field || !field->fields)
+		return NULL;
+		
+	return (field[0].value) ? field[0].value : NULL;
+}
+
+static char *
+_phone_utils_get_strdup_user_prefix(const struct Prefix *field)
+{
+	const char *ret;
+	ret = _phone_utils_get_user_prefix(field);
+	return (ret) ? strdup(ret) : NULL;
+}
+
+
+char *
+phone_utils_get_strdup_user_international_prefix() 
+{
+	return _phone_utils_get_strdup_user_prefix(&international_prefix);
 }
 
 char *
-phone_utils_get_user_national_prefix() 
+phone_utils_get_strdup_user_national_prefix() 
 {
-	return (national_prefix) ? strdup(national_prefix) : NULL;
+	return _phone_utils_get_strdup_user_prefix(&national_prefix);
 }
 
 char *
-phone_utils_get_user_country_code()
+phone_utils_get_strdup_user_country_code()
 {
-	return (country_code) ? strdup(country_code) : NULL;
+	return _phone_utils_get_strdup_user_prefix(&country_code);
 }
 
 char * 
+phone_utils_get_strdup_user_area_code() 
+{
+	return _phone_utils_get_strdup_user_prefix(&area_code);
+}
+
+const char *
+phone_utils_get_user_international_prefix() 
+{
+	return _phone_utils_get_user_prefix(&international_prefix);
+}
+
+const char *
+phone_utils_get_user_national_prefix() 
+{
+	return _phone_utils_get_user_prefix(&national_prefix);
+}
+
+const char *
+phone_utils_get_user_country_code()
+{
+	return _phone_utils_get_user_prefix(&country_code);
+}
+
+const char * 
 phone_utils_get_user_area_code() 
 {
-	return (area_code) ? strdup(area_code) : NULL;
+	return _phone_utils_get_user_prefix(&area_code);
+}
+
+static char *
+_phone_utils_get_user_prefixes(struct Prefix *prefix)
+{
+	int i;
+	char *ret = NULL;
+	char *src;
+	char *dst;
+	if (!prefix)
+		return NULL;
+
+	ret = malloc(prefix->len + 1);
+	if (!ret) {
+		g_debug("Can't allocate memory! %s:%d\n"
+		        "Getting user prefixes failed\n", __FILE__, __LINE__);
+		return NULL;
+	}
+	dst = ret;
+	src = prefix->value;
+	for (i = 0 ; i < prefix->len ; i++) {
+		if (*src == '\0') {
+			*dst = PHONE_UTILS_FIELD_DELIMITER;
+		}
+		else {
+			*dst = *src;
+		}
+		src++;
+		dst++;
+	}
+	*dst = '\0';
+	
+	return ret;
+}
+
+char *
+phone_utils_get_user_international_prefixes() 
+{
+	return _phone_utils_get_user_prefixes(&international_prefix);
+}
+
+char *
+phone_utils_get_user_national_prefixes() 
+{
+	return _phone_utils_get_user_prefixes(&national_prefix);
+}
+
+char *
+phone_utils_get_user_country_codes()
+{
+	return _phone_utils_get_user_prefixes(&country_code);
+}
+
+char *
+phone_utils_get_user_area_codes() 
+{
+	return _phone_utils_get_user_prefixes(&area_code);
+}
+
+static int
+_phone_utils_set_user_prefix(struct Prefix *prefix, const char *value)
+{ /* Set both len and actual value */
+	char *pos, *prev;
+	int i;
+	int num_of_fields;
+
+	if (!value)
+		value = "";
+
+	_phone_utils_free_prefix(prefix);
+	prefix->value = strdup(value);
+	if (!prefix->value) {
+		g_debug("Can't allocate memory! %s:%d\n"
+		          	"Rolling back the setting\n", __FILE__, __LINE__);
+		return 1;
+	}
+	prefix->len = strlen(prefix->value);
+
+	num_of_fields = 1; /* at least one, as we have the basic one */
+	for (pos = prefix->value ; *pos ; pos++) {
+		if (*pos == PHONE_UTILS_FIELD_DELIMITER) {
+			num_of_fields++;
+		}
+	}
+	/* if we had more than one fields, we should add one more because the number
+	 * of fields is the number of delimiters +1 */
+	num_of_fields += (num_of_fields > 1) ? 1 : 0;
+	
+	/* Allocate fields and null terminate the array */
+	prefix->fields = malloc(sizeof(struct PrefixField) * (num_of_fields + 1));
+	if (!prefix->fields) {
+		g_debug("Can't allocate memory! %s:%d\n"
+		          	"Rolling back the setting\n", __FILE__, __LINE__);
+		free(prefix->value);
+		prefix->value = NULL;
+		return 1;
+	}
+
+	prev = pos = prefix->value;
+	i = 0;
+	while (1) {
+		if (*pos == PHONE_UTILS_FIELD_DELIMITER || !*pos) {
+			prefix->fields[i].value = prev;
+			prefix->fields[i].len = pos - prev;
+			
+			i++;
+			if (!*pos) {
+				break;
+			}
+			*pos = '\0';
+			prev = ++pos;
+		}
+		else {
+			pos++;
+		}
+		
+	}
+	/* after we finish, null terminate the array */
+	prefix->fields[i].value = NULL;
+	
+	return 0;
 }
 
 int
 phone_utils_set_user_international_prefix(const char *value) 
 {
-	char *tmp;
-	if (!value)
-		value = "";
-	
-
-	tmp = strdup(value);
-
-	if (!tmp) {
-		g_debug("Can't allocate memory! %s:%d\n"
-		          "Rolling back the setting\n", __FILE__, __LINE__);
-		return 1;
-	}
-	
-	if (international_prefix) 
-		free(international_prefix);
-
-	international_prefix = tmp;	
-	international_prefix_len = strlen(international_prefix);
-	return 0;
+	return _phone_utils_set_user_prefix(&international_prefix, value);
 	
 }
 
 int
 phone_utils_set_user_national_prefix(const char *value) 
 {
-	char *tmp;
-	if (!value)
-		value = "";
-	
-
-	tmp = strdup(value);
-
-	if (!tmp) {
-		g_debug("Can't allocate memory! %s:%d\n"
-		          "Rolling back the setting\n", __FILE__, __LINE__);
-		return 1;
-	}
-	
-	if (national_prefix) 
-		free(national_prefix);
-
-	national_prefix = tmp;	
-	national_prefix_len = strlen(national_prefix);
-	return 0;
+	return _phone_utils_set_user_prefix(&national_prefix, value);
 }
 
 int
 phone_utils_set_user_country_code(const char *value)
 {
-	char *tmp;
-	if (!value)
-		value = "";
-	
-
-	tmp = strdup(value);
-
-	if (!tmp) {
-		g_debug("Can't allocate memory! %s:%d\n"
-		          "Rolling back the setting\n", __FILE__, __LINE__);
-		return 1;
-	}
-	
-	if (country_code) 
-		free(country_code);
-
-	country_code = tmp;	
-	country_code_len = strlen(country_code);
-	return 0;
+	return _phone_utils_set_user_prefix(&country_code, value);
 }
 
 int
 phone_utils_set_user_area_code(const char *value) 
 {
-	char *tmp;
-	if (!value)
-		value = "";
+	return _phone_utils_set_user_prefix(&area_code, value);
+}
+
+static int
+_phone_utils_get_prefix_of_number(struct Prefix *prefix, const char *number)
+{
+	struct PrefixField *field;
+	int i;
+	int empty_index = -1;
 	
-
-	tmp = strdup(value);
-
-	if (!tmp) {
-		g_debug("Can't allocate memory! %s:%d\n"
-		          "Rolling back the setting\n", __FILE__, __LINE__);
-		return 1;
+	for (i = 0, field = prefix->fields ; field->value ; field++, i++) {
+		if (field->len == 0) {
+			empty_index = i;
+		}
+		else if (!strncmp(field->value, number, field->len)) {
+			return i;
+		}
+		
 	}
 	
-	if (area_code) 
-		free(area_code);
-
-	area_code = tmp;	
-	area_code_len = strlen(area_code);
-	return 0;
+	return empty_index;
 }
 
 /*FIXME: handle failed memory allocations! */
 char *
-phone_utils_normalize_number(const char *_number)
+phone_utils_normalize_number_using_params(const char *_number, const char *param_country,
+					const char *param_area)
 {
+	/*FIXME: add support for normalizing completely to what's wanted */
 	char *number = strdup(_number);
 	char *tmp;
+	int found;
+	char *pos;
 	int len;
+	const char *international, *national, *country, *area;
+	int international_len, national_len, country_len, area_len;
+	/* Optimize, already got those saved, get them */
+	international = phone_utils_get_user_international_prefix();
+	national = phone_utils_get_user_national_prefix();
+	country = phone_utils_get_user_country_code();
+	area = phone_utils_get_user_area_code();
+	international_len = strlen(international);
+	national_len = strlen(national);
+	country_len = strlen(country);
+	area_len = strlen(area);
 
 	/* on error */
 	if (!number) {
@@ -380,30 +514,56 @@ phone_utils_normalize_number(const char *_number)
 		return strdup(_number);
 	}
 
-	/* if normalized, skip */
+	/* if normalized, replace the CC and AC to the new ones*/
 	if (number[0] == '+') {
+		/* Strip CC and AC and then replace them. */
+		pos = number + 1;
+		found = _phone_utils_get_prefix_of_number(&country_code, pos);
+		if (found >= 0) {
+			pos += country_code.fields[found].len;
+			found = _phone_utils_get_prefix_of_number(&area_code, pos);
+			if (found >= 0) {
+				int total_len;
+				int param_country_len = strlen(param_country);
+				int param_area_len = strlen(param_area);
+				pos += area_code.fields[found].len;
+				len -= pos - number;
+				tmp = number;
+				/* malloc: +1 for '+' */ 
+				total_len = 1 + param_country_len + param_area_len + len;
+				number = malloc (total_len + 1);
+				number[0] = '+';
+				strncpy(&number[1], param_country, param_country_len);
+				strncpy(&number[1 + param_country_len], param_area, param_area_len);
+				strncpy(&number[1 + param_country_len + param_area_len], pos, len);
+				number[total_len] = '\0';
+
+				free(tmp);
+			}
+		}
 	
 	}
 	/* step 1: normalize 00 to + */
-	else if (international_prefix_len > 0 && !strncmp(number, international_prefix, international_prefix_len)) {
+	else if (international_len > 0 && !strncmp(number, international, international_len)) {
 		tmp = number;
 
-		number = strdup(&number[international_prefix_len - 1]);
+		number = strdup(&number[international_len - 1]);
 		*number = '+';
 
 		free(tmp);
 	}
 	/* step 2: normalize national prefix to +<CC>
-	* if national_prefix = "" assume it's a match */
-	else if (national_prefix_len >= 0 && !strncmp(number, national_prefix, national_prefix_len)) {
+	* if national = "" assume it's a match */
+	else if (national_len >= 0 && !strncmp(number, national, national_len)) {
 		int total_len;
+		int param_country_len = strlen(param_country);
 		tmp = number;
 		/* malloc: +1 for '+' */ 
-		total_len = 1 + country_code_len + len - national_prefix_len; 
+		total_len = 1 + param_country_len + len - national_len; 
 		number = malloc(total_len + 1);
 		number[0] = '+';
-		strncpy(&number[1], country_code, country_code_len);
-		strncpy(&number[1 + country_code_len], &tmp[national_prefix_len], len - national_prefix_len);
+		strncpy(&number[1], param_country, param_country_len);
+		strncpy(&number[1 + param_country_len], &tmp[national_len], len - national_len);
 		number[total_len] = '\0';
 
 		free(tmp);
@@ -411,13 +571,14 @@ phone_utils_normalize_number(const char *_number)
 	/* by default, just try to add +<CC> to the start, better than not trying at all. */
 	else {
 		int total_len;
+		int param_country_len = strlen(param_country);
 		tmp = number;
 		/* malloc: +1 for '+' */ 
-		total_len = 1 + country_code_len + len;
+		total_len = 1 + param_country_len + len;
 		number = malloc (total_len + 1);
 		number[0] = '+';
-		strncpy(&number[1], country_code, country_code_len);
-		strncpy(&number[1 + country_code_len], tmp, len);
+		strncpy(&number[1], param_country, param_country_len);
+		strncpy(&number[1 + param_country_len], tmp, len);
 		number[total_len] = '\0';
 
 		free(tmp);
@@ -426,12 +587,42 @@ phone_utils_normalize_number(const char *_number)
 	return number;
 }
 
+char *
+phone_utils_normalize_number(const char *_number)
+{
+	const char *country, *area;
+	char *ret;
+	country = phone_utils_get_user_country_code();
+	area = phone_utils_get_user_area_code();
+	ret = phone_utils_normalize_number_using_params(_number, country, area);
+	return ret;
+}
+
+/* _a will be normalized using all the known options _b will be optimized
+ * using only the basic */
 int 
 phone_utils_numbers_equal(const char * _a, const char * _b)
 {
 	int ret = 0;
-	char *a = phone_utils_normalize_number(_a);
+	char *a;
 	char *b = phone_utils_normalize_number(_b);
+	char *pos;
+	int cpos, apos;
+	
+	if (!b) 
+		return 0;
+	
+	pos = b + 1; /* Get to the first char after the + */
+	cpos = _phone_utils_get_prefix_of_number(&country_code, pos);
+	if (cpos >= 0) {
+		pos += country_code.fields[cpos].len;
+	}
+	apos = _phone_utils_get_prefix_of_number(&area_code, pos);
+	if (apos >= 0) {
+		pos += area_code.fields[apos].len;
+	}
+	a = phone_utils_normalize_number_using_params(
+		_a, country_code.fields[cpos].value, area_code.fields[apos].value);	
 
 	if (a && b) {
 		if (strcmp(a, b) == 0) {
