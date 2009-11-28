@@ -112,7 +112,7 @@ ICO_Global(Mobile_Satellite_Service) = 8810|8811, 00,
 Iceland = 354 , 00, 0
 India = 91, 00 , 0
 Indonesia = 62, 001|007|017, 0
-Inmarsat, 870, 00, 
+Inmarsat = 870, 00, 
 Inmarsat(Atlantic_Ocean_- East) = 871, 00, 
 Inmarsat(Atlantic_Ocean_- West) = 874, 00, 
 Inmarsat(Indian_Ocean) = 873, 00, 
