@@ -154,6 +154,11 @@ phone_utils_normalize_number(const char *_number);
 char *
 phone_utils_normalize_number_using_params(const char *_number, const char *param_country,
 					const char *param_area);
+/* receives two valid strings containing phone numbers, normalizes them
+ * using phone_utils_normalize_number and returns a strcmp like result
+ */
+int 
+phone_utils_numbers_compare(const char * _a, const char * _b);
 
 /* receives two valid strings containing phone numbers, normalizes them
  * using phone_utils_normalize_number and returns true if they are equal

@@ -598,6 +598,47 @@ phone_utils_normalize_number(const char *_number)
 	return ret;
 }
 
+/* both will be normalized using the basic, unless already normalized, returns like strcmp
+ * Used for fast comparing and ordering of numbers (for instance for use with sqlite) */
+int 
+phone_utils_numbers_compare(const char * _a, const char * _b)
+{
+	int ret = -2;
+	char *a = NULL;
+	char *b = NULL;
+	int clean_a = 0;
+	int clean_b = 0;
+	
+	if (*_a != '+') {
+		a = phone_utils_normalize_number(_a);
+		clean_a = 1;
+	}
+	else {
+		/* A bit hackish */
+		a = (char *) _a; 
+	}
+
+	if (*_b != '+') {
+		b = phone_utils_normalize_number(_b);
+		clean_b = 1;
+	}
+	else {
+		b = (char *) _b;
+	}
+	
+	if (a && b) {
+		ret = strcmp(a, b);
+	}
+
+	/* clean up */
+	if (clean_a)
+		free(a);
+	if (clean_b)
+		free(b);
+
+	return ret;
+}
+
 /* _a will be normalized using all the known options _b will be optimized
  * using only the basic */
 int 
