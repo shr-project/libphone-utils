@@ -598,12 +598,34 @@ phone_utils_normalize_number(const char *_number)
 	return ret;
 }
 
+
+/*Returns -1 when smaller, -2 when MATCHES and smaller, 0 when equal and 1 when greater, 2 when greater and extension
+This conforms to regular strcmp but adds more info*/
+static int
+_extended_strcmp(const char *a, const char * b)
+{
+	for( ; *a && *b && *a == *b ; a++, b++) ;
+	if (!*a && !*b) {
+		return 0;
+	}
+	/* If one reached end and the other didn't: */
+	else if (!*a && *b) {
+		return -2;
+	}
+	else if (*a && !*b) {
+		return 2;
+	}
+	else { /* return a regular negative */
+		return (*a < *b) ? -1 : 1;
+	}
+}
+
 /* both will be normalized using the basic, unless already normalized, returns like strcmp
  * Used for fast comparing and ordering of numbers (for instance for use with sqlite) */
 int 
 phone_utils_numbers_compare(const char * _a, const char * _b)
 {
-	int ret = -2;
+	int ret;
 	char *a = NULL;
 	char *b = NULL;
 	int clean_a = 0;
@@ -626,9 +648,7 @@ phone_utils_numbers_compare(const char * _a, const char * _b)
 		b = (char *) _b;
 	}
 	
-	if (a && b) {
-		ret = strcmp(a, b);
-	}
+	ret = _extended_strcmp(a, b);
 
 	/* clean up */
 	if (clean_a)
