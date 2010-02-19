@@ -35,6 +35,7 @@ cdef extern from "phone-utils.h":
     int phone_utils_set_user_area_code(char *value)
     char * phone_utils_normalize_number(char *_number)
     int phone_utils_numbers_equal(char * _a, char * _b)
+    int phone_utils_numbers_compare(char * _a, char * _b)
 
 def init():
     phone_utils_init()
@@ -92,3 +93,6 @@ def numbers_equal(a, b):
         return True
     else:
         return False
+
+def numbers_compare(a, b):
+    return phone_utils_numbers_compare(a, b)
