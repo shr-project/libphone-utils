@@ -716,7 +716,9 @@ phone_utils_sms_is_valid_number(const char *number)
 		number++;
 
 	while (*number) {
-		if (!strchr(POSSIBLE_DIGITS, *number)) {
+		if (!strchr(POSSIBLE_DIGITS, *number) &&
+    		    	!strchr(filler_chars, *number)) {
+
 			return 0;
 		}
 		number++;
@@ -737,7 +739,9 @@ phone_utils_call_is_valid_number(const char *number)
 
 	while (*number) {
 		if (!strchr(POSSIBLE_DIGITS, *number) &&
+		    	!strchr(filler_chars, *number) &&
 			!strchr(trailing_delimiters, *number)) {
+
 			return 0;
 		}
 		number++;
