@@ -4,10 +4,10 @@
 #include "str-utils.h"
 
 int
-filter_string(char **string, char filters_array[])
+filter_string(char *string, char filters_array[])
 {
-	char *result = *string;
-	char *end = *string;
+	char *result = string;
+	char *end = string;
 
 	while (*end) {
 		char *pos;
@@ -22,9 +22,7 @@ filter_string(char **string, char filters_array[])
 	}
 	*result = '\0';
 
-	*string = realloc(*string, result - *string + 1);
-
-	return result - *string;
+	return result - string;
 }
 
 char *

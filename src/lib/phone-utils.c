@@ -49,7 +49,7 @@ static struct Prefix area_code = {NULL, NULL, 0};
 static char *trailing_delimiters = "wWpP;,";
 #define POSSIBLE_DIGITS "0123456789ABCD"
 static char *possible_chars = POSSIBLE_DIGITS "+";
-static char *filler_chars = " -()";
+static char *filler_chars = " -().";
 
 int
 phone_utils_init()
@@ -505,7 +505,9 @@ phone_utils_normalize_number_using_params(const char *_number, const char *param
 	}
 	
 	remove_from_chrs(&number, trailing_delimiters, 0);
-	filter_string(&number, filler_chars);
+	len = filter_string(number, filler_chars);
+	number = realloc(number, len + 1);
+	
 	len = remove_from_chrs_r(&number, possible_chars, 1);
 
 	/* if empty, i.e some sort of code / ilegal number, return the number */
@@ -742,4 +744,10 @@ phone_utils_call_is_valid_number(const char *number)
 	}
 
 	return 1;
+}
+
+int
+phone_utils_remove_filler_chars(char *number)
+{
+	return filter_string(number, filler_chars);
 }

@@ -179,4 +179,11 @@ phone_utils_sms_is_valid_number(const char *number);
 int
 phone_utils_call_is_valid_number(const char *number);
 
+/* receives a valid string containing a phone number.
+ * Tries to remove all the filler_chars for the number.
+ * returns 0 on success error code on failure.
+ */
+int
+phone_utils_remove_filler_chars(char *number);
+
 #endif
