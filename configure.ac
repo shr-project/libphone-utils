@@ -17,7 +17,9 @@ AC_OUTPUT([
 Makefile
 data/Makefile
 src/Makefile
-src/phone-utils.h
+src/lib/Makefile
+src/bin/Makefile
+src/lib/phone-utils.h
 libphone-utils.pc
 ])
 
