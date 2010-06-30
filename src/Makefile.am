@@ -1,4 +1,4 @@
-SUBDIRS = lib
+SUBDIRS = lib bin
 
 ACLOCAL_AMFLAGS = -I m4
 

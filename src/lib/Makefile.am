@@ -2,7 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 localedir = $(datadir)/locale
 AM_CPPFLAGS = -DLOCALEDIR=\"$(localedir)\" -DPKGDATADIR=\"$(pkgdatadir)\"
-AM_CFLAGS = -Wall -Wextra -Werror @GLIB_CFLAGS@
+AM_CFLAGS = -Wall -Wextra -Werror @GLIB_CFLAGS@ -lm
 
 lib_LTLIBRARIES = libphone-utils.la
 
