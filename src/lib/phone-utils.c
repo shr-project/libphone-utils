@@ -488,7 +488,7 @@ phone_utils_normalize_number_using_params(const char *_number, const char *param
 	char *pos;
 	int len;
 	const char *international, *national, *country, *area;
-	int international_len, national_len, country_len, area_len;
+	int international_len, national_len;
 	/* Optimize, already got those saved, get them */
 	international = phone_utils_get_user_international_prefix();
 	national = phone_utils_get_user_national_prefix();
@@ -496,8 +496,6 @@ phone_utils_normalize_number_using_params(const char *_number, const char *param
 	area = phone_utils_get_user_area_code();
 	international_len = strlen(international);
 	national_len = strlen(national);
-	country_len = strlen(country);
-	area_len = strlen(area);
 
 	/* on error */
 	if (!number) {
