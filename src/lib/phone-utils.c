@@ -487,13 +487,11 @@ phone_utils_normalize_number_using_params(const char *_number, const char *param
 	int found;
 	char *pos;
 	int len;
-	const char *international, *national, *country, *area;
+	const char *international, *national;
 	int international_len, national_len;
 	/* Optimize, already got those saved, get them */
 	international = phone_utils_get_user_international_prefix();
 	national = phone_utils_get_user_national_prefix();
-	country = phone_utils_get_user_country_code();
-	area = phone_utils_get_user_area_code();
 	international_len = strlen(international);
 	national_len = strlen(national);
 
